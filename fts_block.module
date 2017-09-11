@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ * Информация о блоке и дефолтные настройки.
+ */
+function fts_slider_block_info() {
+  $blocks['fts-slider'] = array(
+    'info' => t('Slider'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ * Генерация заголовка блока и его контента.
+ */
+function fts_slider_block_view($delta = '') {
+  $block = array();
+  if ($delta == 'fts-slider') {
+    $block['subject'] = t('Slider');
+
+
+    $slider = db_select('field_data_field_slides', 'sl');
+    $slider->innerJoin('file_managed', 'fi', 'sl.field_image_fid = fi.fid');
+    $slider->fields('fi', array('uri'))
+           ->fields('n', array('nid'))
+           ->condition('n.type', 'slider');
+    $slider =  $slider->execute()->fetchAll();
+    $slides = '';
+    foreach ($slider as $val) {
+      $slides .= '<div><div style="background:url('.file_create_url($val->uri).') no-repeat center; background-size:cover;" class="fts_slide"></div></div>';
+    }
+
+    if ($slides) {
+      $slides = '<div class="fts_slider">'.$slides.'</div>';
+      $block['content'] = $slides;
+    }
+  }
+
+  return $block;
+}
