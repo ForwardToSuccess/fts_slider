@@ -1,6 +1,5 @@
-name = FTS Block
+name = FTS Slider
 description = FTS
 package = FTS
 core = 7.x
 
-dependencies[] = fts_block
